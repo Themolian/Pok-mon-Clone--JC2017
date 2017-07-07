@@ -1,0 +1,466 @@
+#include <iostream>
+#include <string>
+const int MAXMON = 3;
+
+//const int MAXATKS = 40;
+
+bool hasExited = false;
+
+using namespace std;
+
+string rivalName = "Gary";
+string elementalMove;
+
+//Functions
+void choosePokemon();
+void displayChoice();
+void battleScreen();
+void playerFightOptions();
+void playerWins();
+
+struct Pokemon
+{
+	string name;
+	string type;
+	//int level;
+	int HP;
+	int ATK;
+	int DEF;
+	int SpAtk;
+	int SpDef;
+	int Speed;
+	string Moves[4];
+	
+};
+
+struct regularAttacks
+{
+	string name;
+	string type;
+	string attackType;
+	int basePower;
+	string effects;
+};
+
+
+struct attack_tackle : public regularAttacks
+{
+	attack_tackle() //constructor
+	{
+		name = "Tackle";
+		type = "Normal";
+		attackType = "Physical";
+		basePower = 10;
+		effects = "None";
+	}
+} tackle;
+
+struct attack_growl : public regularAttacks
+{
+	attack_growl() // constructor
+	{
+		name = "Growl";
+		type = "Normal";
+		attackType = "Effect";
+		basePower = 0;
+		effects = "Defense -1 stage";
+	}
+}growl;
+
+struct attack_screech : public regularAttacks
+{
+	attack_screech() // constructor
+	{
+		name = "Screech";
+		type = "Normal";
+		attackType = "Effect";
+		basePower = 0;
+		effects = "Defense -2 stages";
+	}
+}screech;
+
+struct elementalAttacks
+{
+	string name;
+	string type;
+	string attackType;
+	int basePower;
+	string effects;
+};
+
+struct attack_ember : public elementalAttacks
+{
+	attack_ember() //constructor
+	{
+		name = "Ember";
+		type = "Fire";
+		attackType = "Special";
+		basePower = 10;
+		effects = "Chance to burn";
+
+	}
+} ember; //So that I can write "ember" instead of "attack_ember ember"
+
+struct attack_water_gun : public elementalAttacks
+{
+	attack_water_gun() //constructor
+	{
+		name = "Water Gun";
+		type = "Water";
+		attackType = "Special";
+		basePower = 11;
+		effects = "None";
+
+	}
+} waterGun;
+
+struct attack_razor_leaf : public elementalAttacks
+{
+	attack_razor_leaf() //constructor
+	{
+		name = "Razor Leaf";
+		type = "Grass";
+		attackType = "Special";
+		basePower = 10;
+		effects = "None";
+
+	}
+} razorLeaf;
+
+Pokemon ListPokemon[MAXMON] = { { "Squirtle", "Water", 60, 48, 65, 50, 64, 42, tackle.name, growl.name, waterGun.name, screech.name },
+{ "Charmander", "Fire", 39, 52, 44, 60, 50, 66, tackle.name, growl.name, ember.name, screech.name },
+{ "Bulbasaur", "Grass", 59, 50, 50, 66, 68, 45 ,tackle.name, growl.name, razorLeaf.name, screech.name }
+};
+
+int playerChoice;
+int rivalChoice;
+
+int playerHealth = ListPokemon[playerChoice].HP;
+int rivalHealth = ListPokemon[rivalChoice].HP;
+
+int main()
+{
+	//Attacks ListAttacks[MAXATKS] = {	{"Tackle", "Normal", "Physical", 20, NULL},
+	//									{"Growl" , "Normal", "Special", 0, "ATK -1"},
+	//									{"Water Gun", "Water", "Special", 30, NULL},
+	//									{"Ember", "Fire", "Special", 30, "Chance to Burn"},
+	//									{"Razor Leaf", "Grass", "Special", 30, NULL},
+	//									{"Screech", "Normal", "Special", 0 , "ATK -2"}
+
+
+
+
+	cout << "Welcome to the Pokemon Simulator!\n";
+	cout << "In this simulator, you will be choosing a starter Pokemon and will be told its stats\n";
+	while (hasExited == false)
+	{
+
+		choosePokemon();
+
+		displayChoice();
+
+		cout << "\nYou have chosen " << ListPokemon[playerChoice].name << "!\n";
+		cout << "But...Oh no! Your rival has chosen " << ListPokemon[rivalChoice].name << " who is strong against " << ListPokemon[playerChoice].name << "!\n";
+
+		if (playerChoice == 3)
+		{
+			break;
+		}
+
+		string playerStarter = ListPokemon[playerChoice].name;
+		string rivalStarter = ListPokemon[rivalChoice].name;
+
+
+		string fightChoice;
+
+		cout << "Do you choose to fight your rival?" << endl;
+		cout << "Type y if you choose to fight him\n";
+		cout << "Type n if you choose not to fight him\n";
+		cin >> fightChoice;
+
+		//if (!cin) //Makes the player input a number rather than any other data type
+		//{
+		//	cin.clear();
+		//	cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+		//	cout << "Please enter a letter" << endl;
+
+		if (fightChoice == "y")
+		{
+			cout << "You have started a battle with your rival!\n";
+			cout << "Rival " << rivalName << " has challenged you to a battle!\n" << endl;
+			cout << "Rival " << rivalName << " sent out " << rivalStarter << "!\n"<< endl;
+			cout << "You sent out " << playerStarter << "!\n";
+			cout << "Your rival has " << rivalHealth << " HP!\n";
+			cout << "You have " << playerHealth << " HP!\n";
+
+			playerFightOptions();
+
+			break;
+		}
+
+		else if (fightChoice == "n")
+		{
+			cout << "You have decided not to start a battle with your rival\n";
+			break;
+
+		}
+	}
+
+
+	return 0;
+}
+
+/*--------------------------------------------FUNCTIONS--------------------------------------------*/
+void choosePokemon() //Start point of program, presents choice of companion to player
+{
+	cout << "Please choose your Pokemon!" << endl << endl;
+	cout << "Press 0 for Squirtle" << endl;
+	cout << "Press 1 for Charmander" << endl;
+	cout << "Press 2 for Bulbasaur" << endl;
+	cout << "Press 3 to exit the program." << endl;
+	cin >> playerChoice;
+	
+	if (!cin) //Makes the player input a number rather than any other data type
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+		cout << "Please enter a number" << endl;
+		choosePokemon();
+	}
+}
+
+void displayChoice() //Handles the choice of the player and sets rivalChoice accordingly
+{
+
+	if (playerChoice == 0)
+	{
+		cout << "Squirtle! I choose you!" << endl;
+		cout << "Your Pokemon's stats are:" << endl;
+		cout << "Name: " << ListPokemon[0].name << "      " << "Type: " << ListPokemon[0].type << "      " << "HP: " << ListPokemon[0].HP << "      "
+			<< "ATK: " << ListPokemon[0].ATK << "      " << "DEF: " << ListPokemon[0].DEF << "      " << "SpAtk: " << ListPokemon[0].SpAtk << "      "
+			<< "SpDef: " << ListPokemon[0].SpDef << "      " << "Speed: " << ListPokemon[0].Speed << "!\n" << endl << "And its moves are: " << endl;
+		for (int i = 0; i < 4; i++)
+		{
+			cout << ListPokemon[0].Moves[i] << endl;
+		}
+		rivalChoice = 2;
+	}
+
+	if (playerChoice == 1)
+	{
+		cout << "Charmander! I choose you!" << endl;
+		cout << "Your Pokemon's stats are:" << endl;
+		cout << "Name: " << ListPokemon[1].name << "      " << "Type: " << ListPokemon[1].type << "      " << "HP: " << ListPokemon[1].HP << "      "
+			<< "ATK: " << ListPokemon[1].ATK << "      " << "DEF: " << ListPokemon[1].DEF << "      " << "SpAtk: " << ListPokemon[1].SpAtk << "      "
+			<< "SpDef: " << ListPokemon[1].SpDef << "      " << "Speed: " << ListPokemon[1].Speed << "!\n" << endl << "And its moves are: " << endl;
+		for (int i = 0; i < 4; i++)
+		{
+			cout << ListPokemon[1].Moves[i] << endl;
+		}
+		rivalChoice = 0;
+	}
+
+	if (playerChoice == 2)
+	{
+		cout << "Bulbasaur! I choose you!" << endl;
+		cout << "Your Pokemon's stats are:" << endl;
+		cout << "Name: " << ListPokemon[2].name << "      " << "Type: " << ListPokemon[2].type << "      " << "HP: " << ListPokemon[2].HP << "      "
+			<< "ATK: " << ListPokemon[2].ATK << "      " << "DEF: " << ListPokemon[2].DEF << "      " << "SpAtk: " << ListPokemon[2].SpAtk << "      "
+			<< "SpDef: " << ListPokemon[2].SpDef << "      " << "Speed: " << ListPokemon[2].Speed << "!\n" << endl << "And its moves are: " << endl;
+		for (int i = 0; i < 4; i++)
+		{
+			cout << ListPokemon[2].Moves[i] << endl;
+		}
+		rivalChoice = 1;
+	}
+
+	if (playerChoice == 3)
+	{
+		cout << "Goodbye\n";
+	}
+
+	if (playerChoice > 3)
+	{
+		cout << "Error: Invalid Choice Input\n";
+		choosePokemon();
+		displayChoice();
+	}
+
+	rivalHealth = ListPokemon[rivalChoice].HP;
+	playerHealth = ListPokemon[playerChoice].HP;
+}
+
+void battleScreen()
+{
+	int updatedRivalHealth = 0;
+	int playerAction;
+	int attackChoice;
+	bool isBattling = false;
+	//double playerMovePower = ListPokemon[playerChoice].ATK / 4;
+
+	cout << "Which attack would you like to use?" << endl;
+
+	for (int i = 0; i < 4; i++)
+	{
+		cout << ListPokemon[playerChoice].Moves[i] << endl;
+		cout << i << endl;
+	}
+	isBattling = true;
+	cin >> attackChoice;
+
+	if (!cin) //Makes the player input a number rather than any other data type
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+		cout << "Please enter a number" << endl;
+	}
+
+	if (!cin) //Makes the player input a number rather than any other data type
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+		cout << "Please enter a number" << endl;
+		battleScreen();
+	}
+
+	while (isBattling = true)
+	{
+
+		if (attackChoice = 0) // Tackle
+		{
+			cout << ListPokemon[playerChoice].name << " used " << ListPokemon[playerChoice].Moves[0] << endl;
+			cout << tackle.basePower << " damage was inflicted to " << ListPokemon[rivalChoice].name << endl;
+			rivalHealth -= 10;
+			cout << "Your rival now has " << rivalHealth << " HP!" << endl;
+			break; //End of isBattling loop
+		}
+
+		if (attackChoice = 1) // Growl
+		{
+			cout << "You used Growl!...But nothing happened...yet";
+			//TODO
+		}
+
+		if (attackChoice = 2) //Elemental Move
+		{
+			cout << ListPokemon[playerChoice].name << " used " << ListPokemon[playerChoice].Moves[2] << "!" << endl;
+			if (playerChoice == 0 && attackChoice == 2)
+			{
+				cout << waterGun.basePower << " damage was inflicted to " << ListPokemon[rivalChoice].name << endl;
+				rivalHealth -= waterGun.basePower;
+				
+				//cout << "Your rival now has " << rivalHealth << " HP!" << endl;
+			}
+
+			if (playerChoice == 1 && attackChoice == 2)
+			{
+				cout << ember.basePower << " damage was inflicted to " << ListPokemon[rivalChoice].name << endl;
+				rivalHealth -= ember.basePower;
+				//cout << "Your rival now has " << rivalHealth << " HP!" << endl;
+			}
+
+			if (playerChoice == 2 && attackChoice == 2)
+			{
+				cout << razorLeaf.basePower << " damage was inflicted to " << ListPokemon[rivalChoice].name << endl;
+				rivalHealth -= razorLeaf.basePower;
+			}
+		}
+
+		if (attackChoice = 3) //Screech
+		{
+			//TODO
+		}
+
+
+
+		if (rivalHealth >= 1)
+		{
+			cout << "Your rival now has " << rivalHealth << " HP!" << endl;
+
+			cout << endl;
+			playerFightOptions();
+			break;
+		}
+
+		if (rivalHealth <= 0)
+		{
+			isBattling = false;
+			rivalHealth = 0;
+			cout << "Your rival now has " << rivalHealth << " HP!" << endl;
+			cout << endl;
+			playerWins();
+			break;
+			
+		}
+	}
+
+}
+
+void playerFightOptions()
+{
+
+	string playerStarter = ListPokemon[playerChoice].name;
+	cout << "What should " << playerStarter << " do?\n";
+
+int playerAction;
+int attackChoice;
+bool isBattling = false;
+
+double playerMovePower = ListPokemon[playerChoice].ATK / 4;
+
+cout << "Attack" << "        " << "Item" << "        " << "        " << "Run" << "        " << "Pokemon" << endl;
+cout << "     1" << "        " << "   2" << "        " << "         3" << "        " << "     4" << endl;
+
+cin >> playerAction;
+
+if (playerAction == 1)
+{
+	battleScreen();
+}
+
+if (playerAction == 2)
+{
+
+}
+
+if (playerAction == 3)
+{
+	cout << "You cannot run from a trainer battle." << endl;
+	playerFightOptions();
+}
+
+if (playerAction == 4)
+{
+	cout << "You have no extra Pokemon" << endl;
+	playerFightOptions();
+}
+}
+
+void playerWins()
+{
+	cout << "Congratulations! You have beaten your rival!\n";
+}
+
+//void rivalFightOptions()
+//TO DO
+//{
+//
+//	string playerStarter = ListPokemon[playerChoice].name;
+//	cout << "What should " << playerStarter << " do?\n";
+//
+//	int playerAction;
+//	int attackChoice;
+//	bool isBattling = false;
+//
+//	double playerMovePower = ListPokemon[playerChoice].ATK / 4;
+//
+//	cout << "Attack" << "        " << "Item" << "        " << "        " << "Run" << "        " << "Pokemon" << endl;
+//	cout << "     1" << "        " << "   2" << "        " << "         3" << "        " << "     4" << endl;
+//
+//	cin >> playerAction;
+//
+//	if (playerAction == 1)
+//	{
+//		battleScreen();
+//	}
+//}
